@@ -51,34 +51,42 @@ if debug > 0 {
 }
 
 /* Checkup */
-for (fileName, selector, niddle) in files {
+for (fileName, selector, needle) in files {
     let filePath=rootPath+fileName
     if debug > 0 {
         print("#fileName: \(fileName)")
         print("#selector: \(selector)")
-        print("#niddle: \(niddle)")
+        print("#needle: \(needle)")
         print("#filePath: \(filePath)")
     }
-    if (!fileExists(filePath)) { errExit("\(filePath) not found!") }
-    
+
     print ("------------")
-    if let file = File(path: filePath) {
-        if file.open() {
-            while true {
-                if let line = file.nextLine() {
-                    print(line)
-                } else {
-                    break
-                }
-            }
-        }
-    }
-    
+    var result = 0
     if (selector != "") {
-        
+        result = searchInFile(path: filePath,
+            selecter: {(line: String) -> String in
+                if (line.range(of: selector) != nil) && (line.range(of: needle) != nil) {
+                    return line
+                }
+                return ""
+            })
     } else {
-        
+        result = searchInFile(path: filePath,
+          selecter: {(line: String) -> String in
+            if (line.range(of: needle) != nil) {
+                return line
+            }
+            return ""
+        })
     }
+    switch result {
+    case 1: errExit("\(filePath): not found!")
+    case 2: errExit("\(filePath): does not open!")
+    case 3: errExit("\(filePath): version tag not found")
+    case 4: errExit("\(filePath): more than 1 line found")
+    default: break
+    }
+
 }
 
 

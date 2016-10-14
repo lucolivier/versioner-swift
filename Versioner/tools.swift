@@ -36,7 +36,25 @@ func fileExists(_ path: String) -> Bool {
     return (checkPath(path) == .isFile) ? true : false
 }
 
-//func cat(_ path: String) ->
+func searchInFile(path: String, selecter: (_ line: String)-> String) -> Int {
+    guard let file = File(path: path) else { return 1 }
+    guard file.open() else { return 2 }
+    var counter = 0
+    while true {
+        if let line = file.nextLine() {
+            if selecter(line) != "" {
+                counter += 1
+                print(line)
+            }
+        } else {
+            file.close()
+            break
+        }
+    }
+    if (counter == 0) { return 3 }
+    if (counter > 1) { return 4 }
+    return 0
+}
 
 class File {
     var filepath: String!
