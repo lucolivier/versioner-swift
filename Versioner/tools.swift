@@ -36,27 +36,73 @@ func fileExists(_ path: String) -> Bool {
     return (checkPath(path) == .isFile) ? true : false
 }
 
-func searchInFile(path: String, selecter: (_ line: String)-> String) -> Int {
-    guard let file = File(path: path) else { return 1 }
-    guard file.open() else { return 2 }
-    var counter = 0
+func searchLinesInFile(path: String, selecter: (_ line: String)-> String) -> (Int, Int, [String]) {
+    guard let file = FileReader(path: path) else { return (-1, 0, []) }
+    guard file.open() else { return (-2, 0, []) }
+    var match = 0
+    var linesamt = 0
+    var lines = [String]()
     while true {
         if let line = file.nextLine() {
+            linesamt += 1
             if selecter(line) != "" {
-                counter += 1
-                print(line)
+                match += 1
+                lines.append(line)
             }
         } else {
             file.close()
             break
         }
     }
-    if (counter == 0) { return 3 }
-    if (counter > 1) { return 4 }
-    return 0
+    return (match, linesamt, lines)
 }
 
-class File {
+class FileWriter {
+    // properties
+    var filepath: String!
+
+    // constants
+    let delimiter = "\n"
+    let encoding = String.Encoding.utf8
+    
+    // convenient vars
+    var hook: FileHandle!
+    
+    init?(path: String) {
+        guard !fileExists(path) else { return nil }
+        self.filepath = path
+    }
+    
+    deinit { self.close() }
+    
+    func open() -> Bool {
+        self.hook = FileHandle(forUpdatingAtPath: self.filepath)
+        return hook != nil ? true : false
+    }
+    
+    func close() {
+        hook?.closeFile()
+        hook = nil
+    }
+    
+    func writeLine(_ line: String) -> Int {
+        let data = (line+delimiter).data(using: encoding)
+        let startOffset = hook!.offsetInFile
+        hook!.write(data!)
+        let endOffset = hook!.offsetInFile
+        if startOffset == endOffset {
+            
+            // **********************************
+            
+        }
+        return 0
+    }
+}
+
+class FileReader {
+    /* Parts thanks to Rene Rudnick https://gist.github.com/loc4l/4630db54d28ce1e11a58 */
+    
+    // properties
     var filepath: String!
     
     // constants

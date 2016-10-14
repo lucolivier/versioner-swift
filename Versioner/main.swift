@@ -51,6 +51,8 @@ if debug > 0 {
 }
 
 /* Checkup */
+var filesLinesAmt = [Int]()
+
 for (fileName, selector, needle) in files {
     let filePath=rootPath+fileName
     if debug > 0 {
@@ -60,10 +62,12 @@ for (fileName, selector, needle) in files {
         print("#filePath: \(filePath)")
     }
 
-    print ("------------")
+    if debug > 0 { print ("------------") }
     var result = 0
+    var linesAmt = 0
+    var lines = [String]()
     if (selector != "") {
-        result = searchInFile(path: filePath,
+        (result, linesAmt, lines) = searchLinesInFile(path: filePath,
             selecter: {(line: String) -> String in
                 if (line.range(of: selector) != nil) && (line.range(of: needle) != nil) {
                     return line
@@ -71,7 +75,7 @@ for (fileName, selector, needle) in files {
                 return ""
             })
     } else {
-        result = searchInFile(path: filePath,
+        (result, linesAmt, lines) = searchLinesInFile(path: filePath,
           selecter: {(line: String) -> String in
             if (line.range(of: needle) != nil) {
                 return line
@@ -79,21 +83,21 @@ for (fileName, selector, needle) in files {
             return ""
         })
     }
-    switch result {
-    case 1: errExit("\(filePath): not found!")
-    case 2: errExit("\(filePath): does not open!")
-    case 3: errExit("\(filePath): version tag not found")
-    case 4: errExit("\(filePath): more than 1 line found")
-    default: break
-    }
+    if result == -1 { errExit("File not found! >\(filePath)") }
+    if result == 2 { errExit("File doesn't open! >\(filePath)") }
+    if linesAmt == 0 { errExit("File looks void! >\(filePath)") }
+    if result == 0 { errExit("Version tag not found! >\(filePath)") }
+    if result > 1 { errExit("More than 1 line found! >\(filePath)") }
+    
+    filesLinesAmt.append(linesAmt)
+    
+    if debug > 0 { print("linesAmt: \(linesAmt)") ; for line in lines { print(line) } }
+}
+
+/* Main */
+
+for (fileName, selector, needle) in files {
 
 }
 
 
-
-
-/*
- for argument in CommandLine.arguments {
- print(argument)
- }
- */
