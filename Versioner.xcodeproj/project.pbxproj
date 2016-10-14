@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		368780EC1DB0D6A200AD973B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780EB1DB0D6A200AD973B /* main.swift */; };
+		368780F31DB0D6D800AD973B /* tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780F21DB0D6D800AD973B /* tools.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,9 @@
 /* Begin PBXFileReference section */
 		368780E81DB0D6A200AD973B /* Versioner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Versioner; sourceTree = BUILT_PRODUCTS_DIR; };
 		368780EB1DB0D6A200AD973B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		368780F21DB0D6D800AD973B /* tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tools.swift; sourceTree = "<group>"; };
+		368780F51DB0D71D00AD973B /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		368780F91DB0D71D00AD973B /* config.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = config.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -43,6 +47,7 @@
 			children = (
 				368780EA1DB0D6A200AD973B /* Versioner */,
 				368780E91DB0D6A200AD973B /* Products */,
+				368780F41DB0D71D00AD973B /* project */,
 			);
 			sourceTree = "<group>";
 		};
@@ -58,8 +63,42 @@
 			isa = PBXGroup;
 			children = (
 				368780EB1DB0D6A200AD973B /* main.swift */,
+				368780F21DB0D6D800AD973B /* tools.swift */,
 			);
 			path = Versioner;
+			sourceTree = "<group>";
+		};
+		368780F41DB0D71D00AD973B /* project */ = {
+			isa = PBXGroup;
+			children = (
+				368780F51DB0D71D00AD973B /* config.xml */,
+				368780F61DB0D71D00AD973B /* src */,
+			);
+			path = project;
+			sourceTree = "<group>";
+		};
+		368780F61DB0D71D00AD973B /* src */ = {
+			isa = PBXGroup;
+			children = (
+				368780F71DB0D71D00AD973B /* js */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		368780F71DB0D71D00AD973B /* js */ = {
+			isa = PBXGroup;
+			children = (
+				368780F81DB0D71D00AD973B /* config */,
+			);
+			path = js;
+			sourceTree = "<group>";
+		};
+		368780F81DB0D71D00AD973B /* config */ = {
+			isa = PBXGroup;
+			children = (
+				368780F91DB0D71D00AD973B /* config.js */,
+			);
+			path = config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,6 +161,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				368780EC1DB0D6A200AD973B /* main.swift in Sources */,
+				368780F31DB0D6D800AD973B /* tools.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
