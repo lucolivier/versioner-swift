@@ -25,18 +25,18 @@ let argAmt = CommandLine.arguments.count
 if argAmt < 2 || argAmt > 3 { error.usage() }
 
 let replString = CommandLine.arguments[1]
-if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, comp: "", quit: true) }
+if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, message: nil, quit: true) }
 
 var rootPath = ""
 if argAmt == 3 {
     rootPath = CommandLine.arguments[2]
     if rootPath[rootPath.startIndex] != "/" {
-        rootPath = FileManager.currentDir + "/" + rootPath
+        rootPath = fm.currentDir + "/" + rootPath
     }
     if rootPath[rootPath.index(before: rootPath.endIndex)] != "/" {
         rootPath += "/"
     }
-    if !FileManager.directoryExists(rootPath) { error.display(err: .PRM_RootPathNotFound, comp: "", quit: true) }
+    if !fm.directoryExists(rootPath) { error.display(err: .PRM_RootPathNotFound, message: nil, quit: true) }
 }
 if debug > 0 {
     print("#replString: \(replString)")
@@ -49,19 +49,25 @@ var filesLinesAmt = [Int]()
 for (fileName, selector, needle) in files {
     let filePath=rootPath+fileName
     if debug > 0 {
+        print ("------------")
         print("#fileName: \(fileName)")
         print("#selector: \(selector)")
         print("#needle: \(needle)")
         print("#filePath: \(filePath)")
     }
 
-    if debug > 0 { print ("------------") }
-    var err: ErrorHandler.ErrorType?
+    var err = ErrorHandler()
+
+    let file = FileHandler(path: filePath, err: &err)
+    if file == nil { error.display(err: .FH_FileNotFound, message: filePath, quit: true) }
+    
     var match = 0
     var linesAmt = 0
     var lines = [String]()
+    
+
     if selector != "" {
-        (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
+        (match, linesAmt, lines) = file!.searchLinesInFile(
             selecter: {(line: String) -> String in
                 if line.range(of: selector) != nil && line.range(of: needle) != nil {
                     return line
@@ -69,7 +75,7 @@ for (fileName, selector, needle) in files {
                 return ""
             })
     } else {
-        (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
+        (match, linesAmt, lines) = file!.searchLinesInFile(
           selecter: {(line: String) -> String in
             if line.range(of: needle) != nil {
                 return line
@@ -77,11 +83,12 @@ for (fileName, selector, needle) in files {
             return ""
         })
     }
-    if err != nil { error.display(err: err!, comp: filePath, quit: true) }
 
-    if linesAmt == 0 { error.display(err: .GEN_FileVoid, comp: filePath, quit: true) }
-    if match == 0 { error.display(err: .GEN_TagNotFound, comp: filePath, quit: true) }
-    if match > 1 { error.display(err: .GEN_TooMuchTags, comp: filePath, quit: true) }
+    if err.isSet { err.display(add: filePath, quit: true) }
+
+    if linesAmt == 0 { error.display(err: .GEN_FileVoid, message: filePath, quit: true) }
+    if match == 0 { error.display(err: .GEN_TagNotFound, message: filePath, quit: true) }
+    if match > 1 { error.display(err: .GEN_TooMuchTags, message: filePath, quit: true) }
     
     filesLinesAmt.append(linesAmt)
     

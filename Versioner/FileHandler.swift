@@ -8,25 +8,50 @@
 
 import Foundation
 
-func searchLinesInFile(path: String, selecter: (_ line: String)-> String) -> (ErrorHandler.ErrorType?, Int, Int, [String]) {
-    guard let file = FileReader(path: path) else { return (.SLIF_FileNotFound, 0, 0, []) }
-    guard file.open() else { return (.SLIF_FileNotOpen, 0, 0, []) }
-    var match = 0
-    var linesamt = 0
-    var lines = [String]()
-    while true {
-        if let line = file.nextLine() {
-            linesamt += 1
-            if selecter(line) != "" {
-                match += 1
-                lines.append(line)
-            }
-        } else {
-            file.close()
-            break
-        }
+class FileHandler {
+    
+    // properties
+    var filepath: String!
+    var err: ErrorHandler
+    
+    // inits
+    
+    init?(path: String, err: inout ErrorHandler) {
+        guard fm.fileExists(path) else { return nil }
+        self.filepath = path
+        self.err = err
     }
-    return (nil, match, linesamt, lines)
+    
+    //  funcs
+    
+    func searchLinesInFile(selecter: (_ line: String)-> String) -> (Int, Int, [String]) {
+        self.err.unset()
+        guard let file = FileReader(path: filepath, err: &self.err) else {
+            self.err.set(err: .SLIF_FileNotFound)
+            return (0,0,[])
+        }
+        guard file.open() else {
+            self.err.set(err: .SLIF_FileNotOpen)
+            return (0,0,[])
+        }
+        var match = 0
+        var linesamt = 0
+        var lines = [String]()
+        while true {
+            if let line = file.nextLine() {
+                linesamt += 1
+                if selecter(line) != "" {
+                    match += 1
+                    lines.append(line)
+                }
+            } else {
+                file.close()
+                break
+            }
+        }
+        return (match, linesamt, lines)
+    }
+
 }
 
 class FileWriter {
@@ -41,7 +66,7 @@ class FileWriter {
     var hook: FileHandle!
     
     init?(path: String) {
-        guard !FileManager.fileExists(path) else { return nil }
+        guard fm.fileExists(path) else { return nil }
         self.filepath = path
     }
     
@@ -82,14 +107,16 @@ class FileReader {
     let encoding = String.Encoding.utf8
     let chunkSize = 4096
     
-    // convenient vars
+    // internals
+    var err: ErrorHandler!
     var hook: FileHandle!
     let encodedDelimiter: Data
     var buffer: Data
     var eof: Bool = false
     
-    init?(path: String) {
-        guard FileManager.fileExists(path) else { return nil }
+    init?(path: String, err: inout ErrorHandler) {
+        guard fm.fileExists(path) else { return nil }
+        self.err = err
         self.filepath = path
         self.encodedDelimiter =  "\n".data(using: encoding)!
         self.buffer = Data(capacity: chunkSize)
@@ -109,7 +136,7 @@ class FileReader {
     
     func nextLine() -> String? {
         
-        if hook == nil { error.display(err: .FR_FileClosed, comp: filepath, quit: false) ; return nil }
+        if hook == nil { self.err.set(err: .FR_FileClosed) ; return nil }
         
         if eof { return nil }
         
