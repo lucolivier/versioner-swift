@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct Err {
+struct ErrorHandler {
     enum ErrorType: Error {
         case NoError
         case PRM_UsageMissed
@@ -24,7 +24,7 @@ struct Err {
         
         case FR_FileClosed
     }
-    static func errorLiterals (_ err: ErrorType) -> String {
+    subscript(err: ErrorType) -> String {
         switch err {
         case .NoError: return                       ""
         case .PRM_UsageMissed: return               "Syntax error"
@@ -39,25 +39,33 @@ struct Err {
         case .SLIF_FileNotOpen: return              "File doesn't open"
             
         case .FR_FileClosed: return                 "File closed"
-        //default: return "Unknow error"
+            //default: return "Unknow error"
         }
     }
     
-    static func display(err: ErrorType, comp: String, quit: Bool) {
-        if comp != "" {
-            print ("\(basename()) error: [\(err.hashValue)] \(errorLiterals(err))")
+    var err: ErrorType?
+    var comp: String?
+    
+    var description: String {
+        let error = (err != nil) ? err! : .NoError
+        if comp == "" {
+            return "\(FileManager.my) error: [\(error.hashValue)] \(self[error])"
         } else {
-            print ("\(basename()) error: [\(err.hashValue)] \(errorLiterals(err))\n\(comp)")
+            return "\(FileManager.my) error: [\(error.hashValue)] \(self[error])\n\(comp)"
         }
+    }
+    
+    func display(err: ErrorType, comp: String, quit: Bool) {
+        print ("\(FileManager.my) \(description)")
         if quit { exit(Int32(err.hashValue)) }
     }
     
-    static func usage() {
+    func usage() {
         display(err: .PRM_UsageMissed, comp: CommandLine.arguments.description, quit: false)
-        print ("Usage: \(basename()) version-string(>=2chars) [root path]")
+        print ("Usage: \(FileManager.my) version-string(>=2chars) [root path]")
         exit(1)
     }
 }
 
-
+let error = ErrorHandler()
 

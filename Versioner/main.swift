@@ -22,21 +22,21 @@ let versionStrMinLength = 3
 /* Preset */
 
 let argAmt = CommandLine.arguments.count
-if (argAmt < 2 || argAmt > 3) { Err.usage() }
+if argAmt < 2 || argAmt > 3 { error.usage() }
 
 let replString = CommandLine.arguments[1]
-if replString.characters.count < versionStrMinLength { Err.display(err: .PRM_VersionStrTooShort, comp: "", quit: true) }
+if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, comp: "", quit: true) }
 
 var rootPath = ""
-if (argAmt == 3) {
+if argAmt == 3 {
     rootPath = CommandLine.arguments[2]
-    if (rootPath[rootPath.startIndex] != "/") {
-        rootPath = currentDir() + "/" + rootPath
+    if rootPath[rootPath.startIndex] != "/" {
+        rootPath = FileManager.currentDir + "/" + rootPath
     }
-    if (rootPath[rootPath.index(before: rootPath.endIndex)] != "/") {
+    if rootPath[rootPath.index(before: rootPath.endIndex)] != "/" {
         rootPath += "/"
     }
-    if (!directoryExists(rootPath)) { Err.display(err: .PRM_RootPathNotFound, comp: "", quit: true) }
+    if !FileManager.directoryExists(rootPath) { error.display(err: .PRM_RootPathNotFound, comp: "", quit: true) }
 }
 if debug > 0 {
     print("#replString: \(replString)")
@@ -56,14 +56,14 @@ for (fileName, selector, needle) in files {
     }
 
     if debug > 0 { print ("------------") }
-    var err: Err.ErrorType?
+    var err: ErrorHandler.ErrorType?
     var match = 0
     var linesAmt = 0
     var lines = [String]()
-    if (selector != "") {
+    if selector != "" {
         (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
             selecter: {(line: String) -> String in
-                if (line.range(of: selector) != nil) && (line.range(of: needle) != nil) {
+                if line.range(of: selector) != nil && line.range(of: needle) != nil {
                     return line
                 }
                 return ""
@@ -71,17 +71,17 @@ for (fileName, selector, needle) in files {
     } else {
         (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
           selecter: {(line: String) -> String in
-            if (line.range(of: needle) != nil) {
+            if line.range(of: needle) != nil {
                 return line
             }
             return ""
         })
     }
-    if err != nil { Err.display(err: err!, comp: filePath, quit: true) }
+    if err != nil { error.display(err: err!, comp: filePath, quit: true) }
 
-    if linesAmt == 0 { Err.display(err: .GEN_FileVoid, comp: filePath, quit: true) }
-    if match == 0 { Err.display(err: .GEN_TagNotFound, comp: filePath, quit: true) }
-    if match > 1 { Err.display(err: .GEN_TooMuchTags, comp: filePath, quit: true) }
+    if linesAmt == 0 { error.display(err: .GEN_FileVoid, comp: filePath, quit: true) }
+    if match == 0 { error.display(err: .GEN_TagNotFound, comp: filePath, quit: true) }
+    if match > 1 { error.display(err: .GEN_TooMuchTags, comp: filePath, quit: true) }
     
     filesLinesAmt.append(linesAmt)
     

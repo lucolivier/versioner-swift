@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		36323FEC1DB23A6900E18699 /* ErrorHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36323FEB1DB23A6900E18699 /* ErrorHandling.swift */; };
+		36323FEE1DB2729E00E18699 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36323FED1DB2729E00E18699 /* FileManager.swift */; };
+		36323FF01DB27BBE00E18699 /* FileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36323FEF1DB27BBE00E18699 /* FileHandler.swift */; };
 		368780EC1DB0D6A200AD973B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780EB1DB0D6A200AD973B /* main.swift */; };
 		368780F31DB0D6D800AD973B /* tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780F21DB0D6D800AD973B /* tools.swift */; };
 /* End PBXBuildFile section */
@@ -26,6 +28,8 @@
 
 /* Begin PBXFileReference section */
 		36323FEB1DB23A6900E18699 /* ErrorHandling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandling.swift; sourceTree = "<group>"; };
+		36323FED1DB2729E00E18699 /* FileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
+		36323FEF1DB27BBE00E18699 /* FileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHandler.swift; sourceTree = "<group>"; };
 		368780E81DB0D6A200AD973B /* Versioner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Versioner; sourceTree = BUILT_PRODUCTS_DIR; };
 		368780EB1DB0D6A200AD973B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		368780F21DB0D6D800AD973B /* tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tools.swift; sourceTree = "<group>"; };
@@ -65,6 +69,8 @@
 			isa = PBXGroup;
 			children = (
 				368780EB1DB0D6A200AD973B /* main.swift */,
+				36323FED1DB2729E00E18699 /* FileManager.swift */,
+				36323FEF1DB27BBE00E18699 /* FileHandler.swift */,
 				36323FEB1DB23A6900E18699 /* ErrorHandling.swift */,
 				368780F21DB0D6D800AD973B /* tools.swift */,
 			);
@@ -166,6 +172,8 @@
 				36323FEC1DB23A6900E18699 /* ErrorHandling.swift in Sources */,
 				368780EC1DB0D6A200AD973B /* main.swift in Sources */,
 				368780F31DB0D6D800AD973B /* tools.swift in Sources */,
+				36323FF01DB27BBE00E18699 /* FileHandler.swift in Sources */,
+				36323FEE1DB2729E00E18699 /* FileManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
