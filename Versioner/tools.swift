@@ -36,9 +36,9 @@ func fileExists(_ path: String) -> Bool {
     return (checkPath(path) == .isFile) ? true : false
 }
 
-func searchLinesInFile(path: String, selecter: (_ line: String)-> String) -> (Int, Int, [String]) {
-    guard let file = FileReader(path: path) else { return (-1, 0, []) }
-    guard file.open() else { return (-2, 0, []) }
+func searchLinesInFile(path: String, selecter: (_ line: String)-> String) -> (Err.ErrorType?, Int, Int, [String]) {
+    guard let file = FileReader(path: path) else { return (.SLIF_FileNotFound, 0, 0, []) }
+    guard file.open() else { return (.SLIF_FileNotOpen, 0, 0, []) }
     var match = 0
     var linesamt = 0
     var lines = [String]()
@@ -54,7 +54,7 @@ func searchLinesInFile(path: String, selecter: (_ line: String)-> String) -> (In
             break
         }
     }
-    return (match, linesamt, lines)
+    return (nil, match, linesamt, lines)
 }
 
 class FileWriter {
@@ -136,7 +136,8 @@ class FileReader {
     }
     
     func nextLine() -> String? {
-        precondition(hook != nil, "Closed file")
+        
+        if hook != nil { Err.display(err: .FR_FileClosed, comp: filepath, quit: false) ; return nil }
         
         if eof { return nil }
         

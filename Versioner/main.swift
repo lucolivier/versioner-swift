@@ -17,23 +17,16 @@ let files = [
     ("config.xml", "pokedesk", "version=")
 ]
 
-/* Funcs */
-
-func usage() {
-    print ("Usage: \(basename()) version-number [root path]")
-    exit(1)
-}
-
-func errExit(_ message: String) {
-    print ("\(basename()) error: \(message)")
-    exit(2)
-}
+let versionStrMinLength = 3
 
 /* Preset */
 
 let argAmt = CommandLine.arguments.count
-if (argAmt < 2 || argAmt > 3) { usage() }
+if (argAmt < 2 || argAmt > 3) { Err.usage() }
+
 let replString = CommandLine.arguments[1]
+if replString.characters.count < versionStrMinLength { Err.display(err: .PRM_VersionStrTooShort, comp: "", quit: true) }
+
 var rootPath = ""
 if (argAmt == 3) {
     rootPath = CommandLine.arguments[2]
@@ -43,7 +36,7 @@ if (argAmt == 3) {
     if (rootPath[rootPath.index(before: rootPath.endIndex)] != "/") {
         rootPath += "/"
     }
-    if (!directoryExists(rootPath)) { errExit("Root path not found \(rootPath)") }
+    if (!directoryExists(rootPath)) { Err.display(err: .PRM_RootPathNotFound, comp: "", quit: true) }
 }
 if debug > 0 {
     print("#replString: \(replString)")
@@ -63,11 +56,12 @@ for (fileName, selector, needle) in files {
     }
 
     if debug > 0 { print ("------------") }
-    var result = 0
+    var err: Err.ErrorType?
+    var match = 0
     var linesAmt = 0
     var lines = [String]()
     if (selector != "") {
-        (result, linesAmt, lines) = searchLinesInFile(path: filePath,
+        (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
             selecter: {(line: String) -> String in
                 if (line.range(of: selector) != nil) && (line.range(of: needle) != nil) {
                     return line
@@ -75,7 +69,7 @@ for (fileName, selector, needle) in files {
                 return ""
             })
     } else {
-        (result, linesAmt, lines) = searchLinesInFile(path: filePath,
+        (err, match, linesAmt, lines) = searchLinesInFile(path: filePath,
           selecter: {(line: String) -> String in
             if (line.range(of: needle) != nil) {
                 return line
@@ -83,11 +77,11 @@ for (fileName, selector, needle) in files {
             return ""
         })
     }
-    if result == -1 { errExit("File not found! >\(filePath)") }
-    if result == 2 { errExit("File doesn't open! >\(filePath)") }
-    if linesAmt == 0 { errExit("File looks void! >\(filePath)") }
-    if result == 0 { errExit("Version tag not found! >\(filePath)") }
-    if result > 1 { errExit("More than 1 line found! >\(filePath)") }
+    if err != nil { Err.display(err: err!, comp: filePath, quit: true) }
+
+    if linesAmt == 0 { Err.display(err: .GEN_FileVoid, comp: filePath, quit: true) }
+    if match == 0 { Err.display(err: .GEN_TagNotFound, comp: filePath, quit: true) }
+    if match > 1 { Err.display(err: .GEN_TooMuchTags, comp: filePath, quit: true) }
     
     filesLinesAmt.append(linesAmt)
     
