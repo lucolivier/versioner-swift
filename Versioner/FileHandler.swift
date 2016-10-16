@@ -11,27 +11,62 @@ import Foundation
 class FileHandler {
     
     // properties
-    var filepath: String!
+    var filepath: String
+    
+    // internals
     var err: ErrorHandler
+    var hookW: FileWriter?
+    var hookR: FileReader?
+    
+    enum Mode { case Read; case Write }
     
     // inits
     
-    init?(path: String, err: inout ErrorHandler) {
-        guard fm.fileExists(path) else { return nil }
-        self.filepath = path
+    init(path: String, err: inout ErrorHandler) {
         self.err = err
+        self.filepath = path
     }
     
+    // conveniences
+    
+    var exists: Bool { return fm.fileExists(filepath) }
+    var isOpen: Bool { return (hookW != nil || hookR != nil) ? true : false }
+    
     //  funcs
+
+    func open(_ mode: Mode) -> Bool {
+        self.err.unset()
+        if mode == .Read && !self.exists {
+            err.set(err: .FH_OR_FileNotExist)
+            return false
+        }
+        if mode == .Read {
+            hookR = FileReader(path: filepath, err: &self.err)
+            if hookR == nil { return false }
+        } else {
+            hookW = FileWriter(path: filepath, err: &self.err)
+            if hookW == nil { return false }
+        }
+        return true
+    }
+    
+    func read() -> String? {
+        self.err.unset()
+        return hookR?.nextLine()
+    }
     
     func searchLinesInFile(selecter: (_ line: String)-> String) -> (Int, Int, [String]) {
         self.err.unset()
-        guard let file = FileReader(path: filepath, err: &self.err) else {
-            self.err.set(err: .SLIF_FileNotFound)
+        if !self.exists {
+            self.err.set(err: .FH_SLIF_FileNotExist)
             return (0,0,[])
         }
-        guard file.open() else {
-            self.err.set(err: .SLIF_FileNotOpen)
+        guard let file = FileReader(path: filepath, err: &self.err) else {
+            self.err.set(err: .FH_SLIF_FileNotFound)
+            return (0,0,[])
+        }
+        if self.err.isSet {
+            self.err.set(err: self.err.error!)
             return (0,0,[])
         }
         var match = 0
@@ -52,6 +87,32 @@ class FileHandler {
         return (match, linesamt, lines)
     }
 
+    func close() {
+        if hookW != nil { hookW?.close() }
+        hookW = nil
+        if hookR != nil { hookR?.close() }
+        hookR = nil
+    }
+    
+    func deleteFile() -> Bool {
+        self.err.unset()
+        if self.exists {
+            close()
+            do {
+                try fm.removeItem(atPath: filepath)
+            } catch {
+                if fm.fileExists(filepath) {
+                self.err.set(err: .FH_DF_ErrRemStillExists, message: error.localizedDescription)
+                    return false
+                } else {
+                  self.err.set(err: .FH_DF_ErrRemNoLongerExists, message: error.localizedDescription)
+                    return true
+                }
+            }
+        }
+        return true
+    }
+    
 }
 
 class FileWriter {
@@ -62,12 +123,18 @@ class FileWriter {
     let delimiter = "\n"
     let encoding = String.Encoding.utf8
     
-    // convenient vars
+    // internals
+    var err: ErrorHandler!
     var hook: FileHandle!
     
-    init?(path: String) {
+    init?(path: String, err: inout ErrorHandler) {
         guard fm.fileExists(path) else { return nil }
+        self.err = err
+        self.err.unset()
         self.filepath = path
+        if !self.open() {
+            self.err.set(err: .FW_FileNotOpen)
+        }
     }
     
     deinit { self.close() }
@@ -83,6 +150,9 @@ class FileWriter {
     }
     
     func writeLine(_ line: String) -> Int {
+        self.err.unset()
+        if hook == nil { self.err.set(err: .FR_FileClosed) ; return 0 }
+        
         let data = (line+delimiter).data(using: encoding)
         let startOffset = hook!.offsetInFile
         hook!.write(data!)
@@ -90,10 +160,12 @@ class FileWriter {
         if startOffset == endOffset {
             
             // **********************************
+            print ("error")
             
         }
-        return 0
+        return endOffset.hashValue - startOffset.hashValue
     }
+    
 }
 
 class FileReader {
@@ -120,6 +192,9 @@ class FileReader {
         self.filepath = path
         self.encodedDelimiter =  "\n".data(using: encoding)!
         self.buffer = Data(capacity: chunkSize)
+        if !self.open() {
+            self.err.set(err: .FR_FileNotOpen)
+        }
     }
     
     deinit { self.close() }
@@ -135,7 +210,7 @@ class FileReader {
     }
     
     func nextLine() -> String? {
-        
+        self.err.unset()
         if hook == nil { self.err.set(err: .FR_FileClosed) ; return nil }
         
         if eof { return nil }

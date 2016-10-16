@@ -11,7 +11,6 @@
 		36323FEE1DB2729E00E18699 /* FileManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36323FED1DB2729E00E18699 /* FileManager.swift */; };
 		36323FF01DB27BBE00E18699 /* FileHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36323FEF1DB27BBE00E18699 /* FileHandler.swift */; };
 		368780EC1DB0D6A200AD973B /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780EB1DB0D6A200AD973B /* main.swift */; };
-		368780F31DB0D6D800AD973B /* tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 368780F21DB0D6D800AD973B /* tools.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,7 +31,6 @@
 		36323FEF1DB27BBE00E18699 /* FileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHandler.swift; sourceTree = "<group>"; };
 		368780E81DB0D6A200AD973B /* Versioner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Versioner; sourceTree = BUILT_PRODUCTS_DIR; };
 		368780EB1DB0D6A200AD973B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		368780F21DB0D6D800AD973B /* tools.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = tools.swift; sourceTree = "<group>"; };
 		368780F51DB0D71D00AD973B /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
 		368780F91DB0D71D00AD973B /* config.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = config.js; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -72,7 +70,6 @@
 				36323FED1DB2729E00E18699 /* FileManager.swift */,
 				36323FEF1DB27BBE00E18699 /* FileHandler.swift */,
 				36323FEB1DB23A6900E18699 /* ErrorHandler.swift */,
-				368780F21DB0D6D800AD973B /* tools.swift */,
 			);
 			path = Versioner;
 			sourceTree = "<group>";
@@ -171,7 +168,6 @@
 			files = (
 				36323FEC1DB23A6900E18699 /* ErrorHandler.swift in Sources */,
 				368780EC1DB0D6A200AD973B /* main.swift in Sources */,
-				368780F31DB0D6D800AD973B /* tools.swift in Sources */,
 				36323FF01DB27BBE00E18699 /* FileHandler.swift in Sources */,
 				36323FEE1DB2729E00E18699 /* FileManager.swift in Sources */,
 			);

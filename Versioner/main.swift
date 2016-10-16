@@ -25,7 +25,7 @@ let argAmt = CommandLine.arguments.count
 if argAmt < 2 || argAmt > 3 { error.usage() }
 
 let replString = CommandLine.arguments[1]
-if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, message: nil, quit: true) }
+if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, quit: true) }
 
 var rootPath = ""
 if argAmt == 3 {
@@ -47,7 +47,7 @@ if debug > 0 {
 var filesLinesAmt = [Int]()
 
 for (fileName, selector, needle) in files {
-    let filePath=rootPath+fileName
+    let filePath = rootPath + fileName
     if debug > 0 {
         print ("------------")
         print("#fileName: \(fileName)")
@@ -59,7 +59,7 @@ for (fileName, selector, needle) in files {
     var err = ErrorHandler()
 
     let file = FileHandler(path: filePath, err: &err)
-    if file == nil { error.display(err: .FH_FileNotFound, message: filePath, quit: true) }
+    if !file.open(.Read) { err.display(quit: true) }
     
     var match = 0
     var linesAmt = 0
@@ -67,7 +67,7 @@ for (fileName, selector, needle) in files {
     
 
     if selector != "" {
-        (match, linesAmt, lines) = file!.searchLinesInFile(
+        (match, linesAmt, lines) = file.searchLinesInFile(
             selecter: {(line: String) -> String in
                 if line.range(of: selector) != nil && line.range(of: needle) != nil {
                     return line
@@ -75,7 +75,7 @@ for (fileName, selector, needle) in files {
                 return ""
             })
     } else {
-        (match, linesAmt, lines) = file!.searchLinesInFile(
+        (match, linesAmt, lines) = file.searchLinesInFile(
           selecter: {(line: String) -> String in
             if line.range(of: needle) != nil {
                 return line
@@ -98,7 +98,34 @@ for (fileName, selector, needle) in files {
 /* Main */
 
 for (fileName, selector, needle) in files {
-
+    let filePath = rootPath + fileName
+    let tempFilePath = filePath + "_tmp"
+    
+    var err = ErrorHandler()
+    
+    let file = FileHandler(path: filePath, err: &err)
+    if !file.open(.Read) { err.display(quit: true) }
+    
+    while true {
+        if let line = file.read() {
+            
+            print(line)
+            
+        } else {
+            if err.isSet { err.display(quit: true) }
+            file.close()
+            break
+        }
+    }
+    
+    let fileTmp = FileHandler(path: tempFilePath, err: &err)
+    if !fileTmp.deleteFile() {
+        if err.isSet { err.display(quit: true) }
+    }
+    if !file.open(.Write) { err.display(quit: true) }
+    
+    
+    
 }
 
 
