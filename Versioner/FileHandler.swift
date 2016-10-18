@@ -55,6 +55,11 @@ class FileHandler {
         return hookR?.nextLine()
     }
     
+    func write(line: String) -> Bool {
+        self.err.unset()
+        return hookW?.writeLine(line) == 0 ? false : true
+    }
+    
     func searchLinesInFile(selecter: (_ line: String)-> String) -> (Int, Int, [String]) {
         self.err.unset()
         if !self.exists {
@@ -113,6 +118,24 @@ class FileHandler {
         return true
     }
     
+    func renameFile(name: String) -> Bool {
+        self.err.unset()
+        if self.exists {
+            self.close()
+            if fm.fileExists(name) {
+                self.err.set(err: .FH_RF_FileNameUsed)
+                return false
+            }
+            do {
+                try fm.moveItem(atPath: filepath, toPath: name)
+            } catch {
+                self.err.set(err: .FH_RF_ErrRenamingFile, message: error.localizedDescription)
+                return false
+            }
+        }
+        return true
+    }
+    
 }
 
 class FileWriter {
@@ -128,7 +151,7 @@ class FileWriter {
     var hook: FileHandle!
     
     init?(path: String, err: inout ErrorHandler) {
-        guard fm.fileExists(path) else { return nil }
+        //guard fm.fileExists(path) else { return nil }
         self.err = err
         self.err.unset()
         self.filepath = path
@@ -140,8 +163,18 @@ class FileWriter {
     deinit { self.close() }
     
     func open() -> Bool {
-        self.hook = FileHandle(forUpdatingAtPath: self.filepath)
-        return hook != nil ? true : false
+        self.err.unset()
+        if !fm.fileExists(self.filepath) {
+            if !fm.createFile(atPath: self.filepath, contents: nil, attributes: nil) {
+                self.err.set(err: .FH_OW_CantCreateFile)
+                return false
+            }
+        }
+        self.hook = FileHandle(forWritingAtPath: self.filepath)
+        if hook == nil {
+            self.err.set(err: .FH_OR_FileNotOpen)
+        }
+        return true
     }
     
     func close() {
@@ -158,10 +191,8 @@ class FileWriter {
         hook!.write(data!)
         let endOffset = hook!.offsetInFile
         if startOffset == endOffset {
-            
-            // **********************************
-            print ("error")
-            
+            self.err.set(err: .FH_OW_NothingWritten)
+            return 0
         }
         return endOffset.hashValue - startOffset.hashValue
     }
@@ -200,8 +231,12 @@ class FileReader {
     deinit { self.close() }
     
     func open() -> Bool {
+        self.err.unset()
         self.hook = FileHandle(forReadingAtPath: self.filepath)
-        return hook != nil ? true : false
+        if hook == nil {
+            self.err.set(err: .FH_OR_FileNotOpen)
+        }
+        return true
     }
     
     func close() {

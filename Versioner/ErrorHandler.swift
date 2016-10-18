@@ -21,20 +21,27 @@ struct ErrorHandler {
         case GEN_FileNotFound
         
         case FH_OR_FileNotExist
+        case FH_OR_FileNotOpen
+        
+        case FH_OW_CantCreateFile
+        case FH_OW_FileNotOpen
+        case FH_OW_NothingWritten
         
         case FH_SLIF_FileNotExist
         case FH_SLIF_FileNotFound
         case FH_SLIF_FileNotOpen
         
-        case FH_DF_ErrRemStillExists
-        case FH_DF_ErrRemNoLongerExists
-        
-        //case FR_FileNotFound
         case FR_FileNotOpen
         case FR_FileClosed
         
         case FW_FileClosed
         case FW_FileNotOpen
+        
+        case FH_DF_ErrRemStillExists
+        case FH_DF_ErrRemNoLongerExists
+     
+        case FH_RF_FileNameUsed
+        case FH_RF_ErrRenamingFile
         
         var Int: Int { return self.hashValue }
     }
@@ -51,20 +58,30 @@ struct ErrorHandler {
         ErrorType.GEN_FileNotFound.Int:             "File not found",
     
         ErrorType.FH_OR_FileNotExist.Int:           "File not exist",
+        ErrorType.FH_OR_FileNotOpen.Int:            "File not oepn",
+        
+        ErrorType.FH_OW_CantCreateFile.Int:         "Can't create file",
+        ErrorType.FH_OW_FileNotOpen.Int:            "File not open",
+        ErrorType.FH_OW_NothingWritten.Int:         "Nothing has been written",
         
         ErrorType.FH_SLIF_FileNotExist.Int:         "File not exist",
         ErrorType.FH_SLIF_FileNotFound.Int:         "File not found",
         ErrorType.FH_SLIF_FileNotOpen.Int:          "File not open",
-    
-        ErrorType.FH_DF_ErrRemStillExists.Int:      "Error while removing file. File still exists",
-        ErrorType.FH_DF_ErrRemNoLongerExists.Int:   "Error while removing file. File still exists",
         
         //ErrorType.FR_FileNotFound.Int:            "File not found",
         ErrorType.FR_FileNotOpen.Int:               "File not open",
         ErrorType.FR_FileClosed.Int:                "File closed",
     
         ErrorType.FW_FileClosed.Int:                "File closed",
-        ErrorType.FW_FileNotOpen.Int:               "File not open"
+        ErrorType.FW_FileNotOpen.Int:               "File not open",
+        
+        ErrorType.FH_DF_ErrRemStillExists.Int:      "Error while removing file. File still exists",
+        ErrorType.FH_DF_ErrRemNoLongerExists.Int:   "Error while removing file. File still exists",
+        
+        ErrorType.FH_RF_FileNameUsed.Int:           "File name already used",
+        ErrorType.FH_RF_ErrRenamingFile.Int:        "Error while renaming file"
+        
+
     ]
     
     // properties

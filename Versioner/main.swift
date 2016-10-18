@@ -106,10 +106,22 @@ for (fileName, selector, needle) in files {
     let file = FileHandler(path: filePath, err: &err)
     if !file.open(.Read) { err.display(quit: true) }
     
+    let fileTmp = FileHandler(path: tempFilePath, err: &err)
+    if !fileTmp.deleteFile() {
+        if err.isSet { err.display(quit: true) }
+    }
+    if !fileTmp.open(.Write) { err.display(quit: true) }
+    
     while true {
         if let line = file.read() {
             
-            print(line)
+            if (selector != "" && line.range(of: selector) != nil && line.range(of: needle) != nil) || (line.range(of: needle) != nil) {
+                
+                print (line)
+                
+            }
+            
+            if !fileTmp.write(line: line) { err.display(quit: true) }
             
         } else {
             if err.isSet { err.display(quit: true) }
@@ -118,13 +130,11 @@ for (fileName, selector, needle) in files {
         }
     }
     
-    let fileTmp = FileHandler(path: tempFilePath, err: &err)
-    if !fileTmp.deleteFile() {
-        if err.isSet { err.display(quit: true) }
-    }
-    if !file.open(.Write) { err.display(quit: true) }
+    file.close()
+    fileTmp.close()
     
-    
+    if !file.deleteFile() { err.display(quit: true) }
+    if !fileTmp.renameFile(name: filePath) { err.display(quit: true) }
     
 }
 

@@ -1,0 +1,12 @@
+
+State of dev
+
+___ Look for how regexes work on framework
+
+________
+
+To Do
+
+___ Refactor ErrorHandler > Move to simple “String” enum to avoid literals table intermediary
+
+___ Catch exception on File manipulation
