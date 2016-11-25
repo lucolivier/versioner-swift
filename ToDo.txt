@@ -1,11 +1,13 @@
 
 State of dev
 
-___ Look for how regexes work on framework
+___ 
 
 ________
 
 To Do
+
+___ Filter version to avoid illegal chars
 
 ___ Refactor ErrorHandler > Move to simple “String” enum to avoid literals table intermediary
 

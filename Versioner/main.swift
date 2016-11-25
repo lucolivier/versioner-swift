@@ -44,6 +44,7 @@ if debug > 0 {
 }
 
 /* Checkup */
+
 var filesLinesAmt = [Int]()
 
 for (fileName, selector, needle) in files {
@@ -91,11 +92,12 @@ for (fileName, selector, needle) in files {
     if match > 1 { error.display(err: .GEN_TooMuchTags, message: filePath, quit: true) }
     
     filesLinesAmt.append(linesAmt)
-    
-    if debug > 0 { print("linesAmt: \(linesAmt)") ; for line in lines { print(line) } }
+    if debug > 0 { print("#linesAmt: \(linesAmt)") ; for line in lines { print(line) } }
 }
 
 /* Main */
+
+if debug > 0 { print ("------------") }
 
 for (fileName, selector, needle) in files {
     let filePath = rootPath + fileName
@@ -114,14 +116,23 @@ for (fileName, selector, needle) in files {
     
     while true {
         if let line = file.read() {
-            
-            if (selector != "" && line.range(of: selector) != nil && line.range(of: needle) != nil) || (line.range(of: needle) != nil) {
+            var newline = line
+            if (selector != "" && line.range(of: selector) != nil && line.range(of: needle) != nil) || (selector == "" && line.range(of: needle) != nil) {
                 
-                print (line)
+                if debug > 0 { print ("#line: \(line)") }
+                
+                if let nr = line.range(of: needle) {
+                    let r = nr.upperBound..<line.endIndex
+                    if let vr = line.range(of: "[A-z0-9.-ß•◊√]{1,}", options: .regularExpression, range: r) {
+                        newline = line.replacingCharacters(in: vr, with: replString)
+                        
+                        if debug > 0 { print ("#newLine: \(newline)") }
+                    }
+                }
                 
             }
             
-            if !fileTmp.write(line: line) { err.display(quit: true) }
+            if !fileTmp.write(line: newline) { err.display(quit: true) }
             
         } else {
             if err.isSet { err.display(quit: true) }
@@ -137,5 +148,6 @@ for (fileName, selector, needle) in files {
     if !fileTmp.renameFile(name: filePath) { err.display(quit: true) }
     
 }
+
 
 
