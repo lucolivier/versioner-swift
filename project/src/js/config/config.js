@@ -1,5 +1,5 @@
 var config = {
-  version: '1.2.3.4.5AB√'
+  version: 'A5.5.7c'
 }
 
 module.exports = config;

@@ -1,5 +1,7 @@
 //
 //  ErrorHandling.swift
+//      version: 0.01ß
+//
 //  Versioner
 //
 //  Created by Luc-Olivier on 10/15/16.
@@ -14,6 +16,7 @@ struct ErrorHandler {
         case PRM_UsageMissed
         case PRM_VersionStrTooShort
         case PRM_RootPathNotFound
+        case PRM_ConfFileNotFound
         
         case GEN_FileVoid
         case GEN_TagNotFound
@@ -51,6 +54,7 @@ struct ErrorHandler {
         ErrorType.PRM_UsageMissed.Int:              "Syntax error",
         ErrorType.PRM_VersionStrTooShort.Int:       "Version string too short (at least \(versionStrMinLength) chars)",
         ErrorType.PRM_RootPathNotFound.Int:         "Root path not found",
+        ErrorType.PRM_ConfFileNotFound.Int:         "Configuration file not found at root project",
         
         ErrorType.GEN_FileVoid.Int:                 "File looks void",
         ErrorType.GEN_TagNotFound.Int:              "Version tag not found",

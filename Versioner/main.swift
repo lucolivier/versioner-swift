@@ -1,5 +1,7 @@
 //
 //  main.swift
+//      version: 0.01ß
+//
 //  Versioner
 //
 //  Created by Luc-Olivier on 9/27/16.
@@ -18,6 +20,9 @@ let files = [
 ]
 
 let versionStrMinLength = 3
+let confFileName = "_versioner.conf"
+let allowedChars = "A-z0-9.-ß•◊√"
+
 
 /* Preset */
 
@@ -43,7 +48,27 @@ if debug > 0 {
     print("#rootPath:   \(rootPath)")
 }
 
-/* Checkup */
+/* Seek params file */
+
+let fileConfPath = rootPath+confFileName
+if !fm.fileExists(fileConfPath) { error.display(err: .PRM_ConfFileNotFound, message: nil, quit: true) }
+
+var err = ErrorHandler()
+let confFile = FileHandler(path: fileConfPath, err: &err)
+if !confFile.open(.Read) { err.display(quit: true) }
+
+while true {
+    if let line = confFile.read() {
+        print (line)
+    } else {
+        if err.isSet { err.display(quit: true) }
+        confFile.close()
+        break
+    }
+}
+
+
+/* Check files */
 
 var filesLinesAmt = [Int]()
 
@@ -123,7 +148,8 @@ for (fileName, selector, needle) in files {
                 
                 if let nr = line.range(of: needle) {
                     let r = nr.upperBound..<line.endIndex
-                    if let vr = line.range(of: "[A-z0-9.-ß•◊√]{1,}", options: .regularExpression, range: r) {
+                    //if let vr = line.range(of: "[A-z0-9.-ß•◊√]{1,}", options: .regularExpression, range: r) {
+                    if let vr = line.range(of: "[\(allowedChars)]{1,}", options: .regularExpression, range: r) {
                         newline = line.replacingCharacters(in: vr, with: replString)
                         
                         if debug > 0 { print ("#newLine: \(newline)") }
