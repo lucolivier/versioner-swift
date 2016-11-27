@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "1.2.3"
+            argument = "3.2.1"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

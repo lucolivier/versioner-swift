@@ -29,10 +29,12 @@
 		36323FEB1DB23A6900E18699 /* ErrorHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ErrorHandler.swift; sourceTree = "<group>"; };
 		36323FED1DB2729E00E18699 /* FileManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileManager.swift; sourceTree = "<group>"; };
 		36323FEF1DB27BBE00E18699 /* FileHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FileHandler.swift; sourceTree = "<group>"; };
+		3656F0861DEB7B500097C5A8 /* _versioner.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = _versioner.conf; sourceTree = "<group>"; };
+		3656F0871DEB7B500097C5A8 /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
+		3656F0891DEB7B500097C5A8 /* maindoc.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = maindoc.txt; sourceTree = "<group>"; };
+		3656F08D1DEB7B500097C5A8 /* config.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = config.js; sourceTree = "<group>"; };
 		368780E81DB0D6A200AD973B /* Versioner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Versioner; sourceTree = BUILT_PRODUCTS_DIR; };
 		368780EB1DB0D6A200AD973B /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
-		368780F51DB0D71D00AD973B /* config.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = config.xml; sourceTree = "<group>"; };
-		368780F91DB0D71D00AD973B /* config.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = config.js; sourceTree = "<group>"; };
 		36B3F4621DB6B9720008C0D8 /* ToDo.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ToDo.txt; sourceTree = SOURCE_ROOT; };
 		36B3F4631DB6C95B0008C0D8 /* MyPlayground.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = MyPlayground.playground; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -48,12 +50,55 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		3656F0851DEB7B500097C5A8 /* project */ = {
+			isa = PBXGroup;
+			children = (
+				3656F0861DEB7B500097C5A8 /* _versioner.conf */,
+				3656F0871DEB7B500097C5A8 /* config.xml */,
+				3656F0881DEB7B500097C5A8 /* doc */,
+				3656F08A1DEB7B500097C5A8 /* src */,
+			);
+			path = project;
+			sourceTree = "<group>";
+		};
+		3656F0881DEB7B500097C5A8 /* doc */ = {
+			isa = PBXGroup;
+			children = (
+				3656F0891DEB7B500097C5A8 /* maindoc.txt */,
+			);
+			path = doc;
+			sourceTree = "<group>";
+		};
+		3656F08A1DEB7B500097C5A8 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				3656F08B1DEB7B500097C5A8 /* js */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		3656F08B1DEB7B500097C5A8 /* js */ = {
+			isa = PBXGroup;
+			children = (
+				3656F08C1DEB7B500097C5A8 /* config */,
+			);
+			path = js;
+			sourceTree = "<group>";
+		};
+		3656F08C1DEB7B500097C5A8 /* config */ = {
+			isa = PBXGroup;
+			children = (
+				3656F08D1DEB7B500097C5A8 /* config.js */,
+			);
+			path = config;
+			sourceTree = "<group>";
+		};
 		368780DF1DB0D6A200AD973B = {
 			isa = PBXGroup;
 			children = (
 				368780EA1DB0D6A200AD973B /* Versioner */,
 				368780E91DB0D6A200AD973B /* Products */,
-				368780F41DB0D71D00AD973B /* project */,
+				3656F0851DEB7B500097C5A8 /* project */,
 			);
 			sourceTree = "<group>";
 		};
@@ -76,39 +121,6 @@
 				36323FEB1DB23A6900E18699 /* ErrorHandler.swift */,
 			);
 			path = Versioner;
-			sourceTree = "<group>";
-		};
-		368780F41DB0D71D00AD973B /* project */ = {
-			isa = PBXGroup;
-			children = (
-				368780F51DB0D71D00AD973B /* config.xml */,
-				368780F61DB0D71D00AD973B /* src */,
-			);
-			path = project;
-			sourceTree = "<group>";
-		};
-		368780F61DB0D71D00AD973B /* src */ = {
-			isa = PBXGroup;
-			children = (
-				368780F71DB0D71D00AD973B /* js */,
-			);
-			path = src;
-			sourceTree = "<group>";
-		};
-		368780F71DB0D71D00AD973B /* js */ = {
-			isa = PBXGroup;
-			children = (
-				368780F81DB0D71D00AD973B /* config */,
-			);
-			path = js;
-			sourceTree = "<group>";
-		};
-		368780F81DB0D71D00AD973B /* config */ = {
-			isa = PBXGroup;
-			children = (
-				368780F91DB0D71D00AD973B /* config.js */,
-			);
-			path = config;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

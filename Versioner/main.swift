@@ -1,6 +1,6 @@
 //
 //  main.swift
-//      version: 0.02ß
+//      version: 0.03ß
 //
 //  Versioner
 //
@@ -14,14 +14,10 @@ let debug = 0
 
 /* Static Params */
 
-//let files = [
-//    ("src/js/config/config.js","", "version:"),
-//    ("config.xml", "pokedesk", "version=")
-//]
-
+let myVersion = "0.04ß"
 let versionStrMinLength = 3
 let confFileName = "_versioner.conf"
-let allowedChars = "A-z0-9.-ß•◊√"
+let allowedChars = "A-z0-9.-ß•◊√_+"
 
 
 /* Preset */
@@ -31,6 +27,9 @@ if argAmt < 2 || argAmt > 3 { error.usage() }
 
 let replString = CommandLine.arguments[1]
 if replString.characters.count < versionStrMinLength { error.display(err: .PRM_VersionStrTooShort, quit: true) }
+
+let filteredReplString = replString.replacingOccurrences(of: "[\(allowedChars)]{1,}", with: "", options: .regularExpression)
+if filteredReplString != "" { error.display(err: .PRM_VersionIllChars, quit: true) }
 
 var rootPath = ""
 if argAmt == 3 {
@@ -130,7 +129,7 @@ for (fileName, selector, needle) in paramLines {
 
 /* Main */
 
-if debug == 0 { print ("\(fm.my)") }
+if debug == 0 { print ("\(fm.my) \(myVersion)") }
 else { print ("------------") }
 
 

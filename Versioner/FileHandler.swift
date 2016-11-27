@@ -1,6 +1,6 @@
 //
 //  FileHandler.swift
-//      version: 0.02ß
+//      version: 0.03ß
 //
 //  Versioner
 //
@@ -64,7 +64,7 @@ class FileHandler {
             line = hookR?.nextLine()
             if line != nil {
                 line = line?.replacingOccurrences(of: "[\u{9} ]", with: "", options: .regularExpression)
-                if line != nil && line != "" { break }
+                if line != nil && line != "" && line?[(line?.startIndex)!] != "#" { break }
             } else {
                 break
             }
