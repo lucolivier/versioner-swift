@@ -1,7 +1,8 @@
 
 State of dev
 
-___ Integrating conf file support
+_0_ Integrating conf file support
+    > running after a bug with FileHandler that seams to have not referenced err object address
 
 ________
 
@@ -9,6 +10,6 @@ To Do
 
 ___ Filter version to avoid illegal chars
 
-___ Refactor ErrorHandler > Move to simple “String” enum to avoid literals table intermediary
+_X_ Refactor ErrorHandler > Move to simple “String” enum to avoid literals table intermediary
 
 ___ Catch exception on File manipulation

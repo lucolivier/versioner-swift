@@ -2,15 +2,27 @@
 
 import Cocoa
 
-//var str = "version: '2.4.5'"
-//var str = "version: '1.2.5A' •123••"
-var str = "  version= 'zzz'"
-var newVersion = "2.5.6◊"
+struct Container {
+    var value = ""
+}
+var c = Container()
+c.value = "1"
 
-if let nr = str.range(of: "version=") {
-    let r = nr.upperBound..<str.endIndex
-    if let vr = str.range(of: "[A-z0-9.-ß•◊√]{1,}", options: .regularExpression, range: r) {
-        let str2 = str.replacingCharacters(in: vr, with: newVersion)
+class Test {
+    var c: Container
+    init(cont: inout Container) {
+        self.c = cont
+    }
+    func change(val: String) {
+        self.c.value = val
     }
 }
+
+var t = Test(cont: &c)
+print(c.value)
+print(t.c.value)
+
+t.change(val: "3")
+print(c.value)
+print(t.c.value)
 

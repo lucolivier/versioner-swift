@@ -1,6 +1,6 @@
 //
 //  main.swift
-//      version: 0.01ß
+//      version: 0.02ß
 //
 //  Versioner
 //
@@ -10,14 +10,14 @@
 
 import Foundation
 
-let debug = 1
+let debug = 0
 
 /* Static Params */
 
-let files = [
-    ("src/js/config/config.js","", "version:"),
-    ("config.xml", "pokedesk", "version=")
-]
+//let files = [
+//    ("src/js/config/config.js","", "version:"),
+//    ("config.xml", "pokedesk", "version=")
+//]
 
 let versionStrMinLength = 3
 let confFileName = "_versioner.conf"
@@ -48,31 +48,40 @@ if debug > 0 {
     print("#rootPath:   \(rootPath)")
 }
 
-/* Seek params file */
+
+/* Check params file */
 
 let fileConfPath = rootPath+confFileName
-if !fm.fileExists(fileConfPath) { error.display(err: .PRM_ConfFileNotFound, message: nil, quit: true) }
+if !fm.fileExists(fileConfPath) { error.display(err: .PRM_CFNotFound, message: nil, quit: true) }
 
-var err = ErrorHandler()
-let confFile = FileHandler(path: fileConfPath, err: &err)
-if !confFile.open(.Read) { err.display(quit: true) }
+//var err = ErrorHandler()
+let confFile = FileHandler(path: fileConfPath, err: &error)
+if !confFile.open(.Read) { error.display(quit: true) }
+
+var paramLines = [(String,String,String)]()
 
 while true {
-    if let line = confFile.read() {
-        print (line)
+    if let line = confFile.readParamLine() {
+        let splited = line.components(separatedBy: ",")
+        if splited.count != 3 { error.display(err: .PRM_CFLineSyntaxError, quit: true) }
+        paramLines.append((splited[0],splited[1],splited[2]))
+        if debug > 0 { print ("#paramLine: \(line)") }
     } else {
-        if err.isSet { err.display(quit: true) }
         confFile.close()
         break
     }
 }
+if paramLines.count == 0 { error.display(err: .PRM_NoCFLines, quit: true) }
+
+if debug > 0 { print(paramLines) }
+
 
 
 /* Check files */
 
 var filesLinesAmt = [Int]()
 
-for (fileName, selector, needle) in files {
+for (fileName, selector, needle) in paramLines {
     let filePath = rootPath + fileName
     if debug > 0 {
         print ("------------")
@@ -81,11 +90,10 @@ for (fileName, selector, needle) in files {
         print("#needle: \(needle)")
         print("#filePath: \(filePath)")
     }
-
-    var err = ErrorHandler()
-
-    let file = FileHandler(path: filePath, err: &err)
-    if !file.open(.Read) { err.display(quit: true) }
+    
+    error.unset()
+    let file = FileHandler(path: filePath, err: &error)
+    if !file.open(.Read) { error.display(quit: true) }
     
     var match = 0
     var linesAmt = 0
@@ -110,7 +118,7 @@ for (fileName, selector, needle) in files {
         })
     }
 
-    if err.isSet { err.display(add: filePath, quit: true) }
+    if error.isSet { error.display(add: filePath, quit: true) }
 
     if linesAmt == 0 { error.display(err: .GEN_FileVoid, message: filePath, quit: true) }
     if match == 0 { error.display(err: .GEN_TagNotFound, message: filePath, quit: true) }
@@ -122,22 +130,23 @@ for (fileName, selector, needle) in files {
 
 /* Main */
 
-if debug > 0 { print ("------------") }
+if debug == 0 { print ("\(fm.my)") }
+else { print ("------------") }
 
-for (fileName, selector, needle) in files {
+
+for (fileName, selector, needle) in paramLines {
     let filePath = rootPath + fileName
     let tempFilePath = filePath + "_tmp"
     
-    var err = ErrorHandler()
+    error.unset()
+    let file = FileHandler(path: filePath, err: &error)
+    if !file.open(.Read) { error.display(quit: true) }
     
-    let file = FileHandler(path: filePath, err: &err)
-    if !file.open(.Read) { err.display(quit: true) }
-    
-    let fileTmp = FileHandler(path: tempFilePath, err: &err)
+    let fileTmp = FileHandler(path: tempFilePath, err: &error)
     if !fileTmp.deleteFile() {
-        if err.isSet { err.display(quit: true) }
+        if error.isSet { error.display(quit: true) }
     }
-    if !fileTmp.open(.Write) { err.display(quit: true) }
+    if !fileTmp.open(.Write) { error.display(quit: true) }
     
     while true {
         if let line = file.read() {
@@ -148,20 +157,20 @@ for (fileName, selector, needle) in files {
                 
                 if let nr = line.range(of: needle) {
                     let r = nr.upperBound..<line.endIndex
-                    //if let vr = line.range(of: "[A-z0-9.-ß•◊√]{1,}", options: .regularExpression, range: r) {
                     if let vr = line.range(of: "[\(allowedChars)]{1,}", options: .regularExpression, range: r) {
                         newline = line.replacingCharacters(in: vr, with: replString)
                         
-                        if debug > 0 { print ("#newLine: \(newline)") }
+                        if debug == 0 { print ("> \(fileName)") }
+                        else { print ("#newLine: \(newline)") }
                     }
                 }
                 
             }
             
-            if !fileTmp.write(line: newline) { err.display(quit: true) }
+            if !fileTmp.write(line: newline) { error.display(quit: true) }
             
         } else {
-            if err.isSet { err.display(quit: true) }
+            if error.isSet { error.display(quit: true) }
             file.close()
             break
         }
@@ -170,8 +179,8 @@ for (fileName, selector, needle) in files {
     file.close()
     fileTmp.close()
     
-    if !file.deleteFile() { err.display(quit: true) }
-    if !fileTmp.renameFile(name: filePath) { err.display(quit: true) }
+    if !file.deleteFile() { error.display(quit: true) }
+    if !fileTmp.renameFile(name: filePath) { error.display(quit: true) }
     
 }
 

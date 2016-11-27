@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "A5.5.7c"
+            argument = "1.2.3"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
